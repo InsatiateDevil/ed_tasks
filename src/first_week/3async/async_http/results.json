@@ -1,0 +1,12 @@
+{
+    "https://example.com": 200,
+    "https://httpbin.org/status/404": 404,
+    "https://nonexistent.url": "ClientConnectorDNSError",
+    "https://httpbin.org/status/200": 200,
+    "https://example5.com": "TimeoutError",
+    "https://example4.com": 200,
+    "https://example3.com": 200,
+    "https://example2.com": 403,
+    "https://example1.com": 200,
+    "https://example0.com": "ClientConnectorDNSError"
+}
