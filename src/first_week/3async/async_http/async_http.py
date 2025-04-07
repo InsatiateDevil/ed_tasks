@@ -20,8 +20,9 @@ async def fetch_urls(urls: list[str], file_path: str):
     semaphore = asyncio.Semaphore(5)
     results_dict = {}
 
-    async def fetch_url(session: aiohttp.ClientSession, url: str,
-                        semaphore: asyncio.Semaphore):
+    async def fetch_url(
+        session: aiohttp.ClientSession, url: str, semaphore: asyncio.Semaphore
+    ):
         try:
             async with semaphore:
                 async with session.get(url, timeout=10) as response:

@@ -26,29 +26,30 @@ def run_wsgi_app(app, environ):
     response_body = app(environ, start_response)
 
     # Формируем HTTP-ответ
-    response = [f'HTTP/1.1 {status_line}'.encode()]
+    response = [f"HTTP/1.1 {status_line}".encode()]
     for header in headers:
-        response.append(f'{header[0]}: {header[1]}'.encode())
-    response.append(b'')
+        response.append(f"{header[0]}: {header[1]}".encode())
+    response.append(b"")
     response.extend(response_body)
 
     return response
 
+
 # Пример использования
 environ = {
-    'REQUEST_METHOD': 'GET',
-    'PATH_INFO': '/',
-    'SERVER_NAME': 'localhost',
-    'SERVER_PORT': '8000',
+    "REQUEST_METHOD": "GET",
+    "PATH_INFO": "/",
+    "SERVER_NAME": "localhost",
+    "SERVER_PORT": "8000",
     # Другие необходимые ключи
 }
 
 
 def simple_app(environ, start_response):
-    start_response('200 OK', [('Content-Type', 'text/plain')])
+    start_response("200 OK", [("Content-Type", "text/plain")])
     return [b"Hello, World!"]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     response = run_wsgi_app(simple_app, environ)
-    print(b'\r\n'.join(response).decode())
+    print(b"\r\n".join(response).decode())

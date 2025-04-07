@@ -6,7 +6,7 @@ import json
 import multiprocessing
 from concurrent.futures import ThreadPoolExecutor
 
-sys.setrecursionlimit(10 ** 6)
+sys.setrecursionlimit(10**6)
 
 
 # Создание массива чисел для теста
@@ -26,6 +26,7 @@ def factorial(number):
 
 
 # Различные варианты параллельного выполнения
+
 
 # Вариант A: Использование пула потоков с concurrent.futures
 def process_with_threads(data):
@@ -85,36 +86,36 @@ def compare_performance(data):
     # Однопоточный вариант
     start = time.time()
     single_thread_result = [factorial(num) for num in data]
-    results['Single Thread'] = time.time() - start
+    results["Single Thread"] = time.time() - start
 
     # Вариант А c использованием пула потоков с concurrent.futures
     start = time.time()
     thread_result = process_with_threads(data)
-    results['Thread Pool'] = time.time() - start
+    results["Thread Pool"] = time.time() - start
 
     # Вариант Б с использованием multiprocessing.Pool с доступным количеством процессоров
     start = time.time()
     pool_result = process_with_pool(data)
-    results['Process Pool'] = time.time() - start
+    results["Process Pool"] = time.time() - start
 
     # Вариант В с использованием связки процессов и очередей
     start = time.time()
     process_result = process_with_processes(data)
-    results['Separate Processes'] = time.time() - start
+    results["Separate Processes"] = time.time() - start
 
     return results
 
 
 # Сохранение результатов в json и csv форматах
 def save_results(results, filename):
-    with open(filename, 'w') as f:
+    with open(filename, "w") as f:
         json.dump(results, f)
 
 
 def save_results_csv(results, filename):
-    with open(filename, 'w', newline='') as f:
+    with open(filename, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(['Variant', 'Time'])
+        writer.writerow(["Variant", "Time"])
         for variant, time in results.items():
             writer.writerow([variant, time])
 
@@ -130,5 +131,5 @@ if __name__ == "__main__":
     for variant, time in performance_results.items():
         print(f"{variant}: {time:.3f} seconds")
 
-    save_results(performance_results, 'performance_results.json')
-    save_results_csv(performance_results, 'performance_results.csv')
+    save_results(performance_results, "performance_results.json")
+    save_results_csv(performance_results, "performance_results.csv")
