@@ -20,14 +20,24 @@ async def fetch_urls(urls: list[str], file_path: str):
     semaphore = asyncio.Semaphore(5)
     results_dict = {}
 
-    for url in urls:
-        async with aiohttp.ClientSession() as session:
-            try:
-                async with semaphore:
-                    async with session.get(url, timeout=5) as response:
-                        results_dict[url] = response.status
-            except Exception as e:
-                results_dict[url] = e.__class__.__name__
+    async def fetch_url(session: aiohttp.ClientSession, url: str,
+                        semaphore: asyncio.Semaphore):
+        try:
+            async with semaphore:
+                async with session.get(url, timeout=10) as response:
+                    results_dict[url] = response.status
+        except Exception as e:
+            results_dict[url] = e.__class__.__name__
+            print(f"{url} {e}")
+
+    async with aiohttp.ClientSession() as session:
+        tasks_pool = []
+
+        for url in urls:
+            task = asyncio.create_task(fetch_url(session, url, semaphore))
+            tasks_pool.append(task)
+
+        await asyncio.gather(*tasks_pool)
 
     with open(file_path, "w") as f:
         json.dump(results_dict, f, indent=4)

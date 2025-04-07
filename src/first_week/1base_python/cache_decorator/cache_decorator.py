@@ -5,10 +5,10 @@ def lru_cache(func=None, maxsize=None):
     cache = {}
 
     def decorator(func):
-        def wrapper(*args, **kwargs):
+        async def wrapper(*args, **kwargs):
             cache_key = args + tuple(kwargs.items())
             if cache_key not in cache:
-                cache[cache_key] = func(*args, **kwargs)
+                cache[cache_key] = await func(*args, **kwargs)
             if maxsize is not None and len(cache) > maxsize:
                 first_key = next(iter(cache))
                 del cache[first_key]

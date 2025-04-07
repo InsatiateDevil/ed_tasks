@@ -1,4 +1,5 @@
 import asyncio
+import concurrent
 import json
 import aiohttp
 
@@ -17,29 +18,33 @@ def write_to_file(file_path, data):
 
 
 async def fetch_urls(path_to_urls: str, file_path: str):
-    semaphore = asyncio.Semaphore(5)
-
     urls = read_large_file(path_to_urls)
 
-    for url in urls:
-        async with aiohttp.ClientSession() as session:
-            try:
-                async with semaphore:
-                    async with session.get(url, timeout=10) as response:
-                        content = await response.text()
-                        result_dict = {
-                            "url": url,
-                            "status": response.status,
-                            "content": content,
-                        }
-            except Exception as e:
-                content = None
-                result_dict = {
-                    "url": url,
-                    "status": e.__class__.__name__,
-                    "content": content,
-                }
-        await asyncio.to_thread(write_to_file, file_path, result_dict)
+    async def fetch_url(session: aiohttp.ClientSession, url: str,
+                        semaphore: asyncio.Semaphore):
+        try:
+            async with semaphore:
+                async with session.get(url, timeout=10) as response:
+                    content = await response.text()
+                    result_dict = {
+                        "url": url,
+                        "status": response.status,
+                        "content": content,
+                    }
+        except Exception as e:
+            content = None
+            result_dict = {
+                "url": url,
+                "status": e.__class__.__name__,
+                "content": content,
+            }
+        return result_dict
+
+# создание 2 очередей (под чтение из урла и под запись в файл)
+# запуск пяти воркеров
+# подача урлов в воркеры (aiofiles)
+# воркер возвращает text
+# memray
 
 
 if __name__ == "__main__":
