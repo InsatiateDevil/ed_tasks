@@ -6,17 +6,6 @@ import aiofiles
 import aiohttp
 
 
-async def read_worker(file_name, url_queue):
-    async with aiofiles.open(file_name, "r") as file:
-        while True:
-            url = await file.readline()
-            if not url:
-                for _ in range(5):
-                    await url_queue.put(None)
-                break
-            await url_queue.put(url.strip())
-
-
 async def fetch_url(session, url):
     try:
         print(f"Fetching URL: {url}")
@@ -73,10 +62,6 @@ async def main(input_file="urls.txt", output_file="results.json"):
     url_queue = asyncio.Queue(maxsize=worker_num)
     result_queue = asyncio.Queue(maxsize=worker_num)
     write_queue = asyncio.Queue(maxsize=worker_num)
-    read_workers = [
-        asyncio.create_task(read_worker(file_name=input_file, url_queue=url_queue))
-        for _ in range(1)
-    ]
     fetch_workers = [
         asyncio.create_task(
             fetch_url_worker(url_queue=url_queue, result_queue=result_queue)
@@ -96,7 +81,17 @@ async def main(input_file="urls.txt", output_file="results.json"):
         for _ in range(worker_num)
     ]
 
-    await asyncio.gather(*read_workers, *fetch_workers, *encode_workers, *write_workers)
+    async with aiofiles.open(input_file, "r") as file:
+        while True:
+            url = await file.readline()
+            if not url:
+                break
+            await url_queue.put(url.strip())
+
+    for _ in range(5):
+        await url_queue.put(None)
+
+    await asyncio.gather(*fetch_workers, *encode_workers, *write_workers)
     print("Все процессы завершены, файл сохранен.")
 
 
