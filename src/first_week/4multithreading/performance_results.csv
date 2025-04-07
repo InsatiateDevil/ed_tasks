@@ -1,0 +1,5 @@
+Variant,Time
+Single Thread,108.00463724136353
+Thread Pool,112.10483598709106
+Process Pool,17.99214744567871
+Separate Processes,41.671003580093384
