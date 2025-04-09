@@ -61,6 +61,7 @@ def process_transaction():
 
 
 if __name__ == '__main__':
+    # Бибилиотека signal не работает в Windows(как минимум с текущим кейсом)
     start_time = time.time()
     try:
         process_transaction()
