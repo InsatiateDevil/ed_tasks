@@ -5,10 +5,13 @@ import redis
 
 class RedisQueue:
     """Класс очереди сообщений на основе Redis"""
+
     # Добавляем справа - берем слева(иначе кладем в конец, берем из начала)
 
     def __init__(self, queue_name: str):
-        self.connection = redis.Redis(host='localhost', port=6379, decode_responses=True)
+        self.connection = redis.Redis(
+            host="localhost", port=6379, decode_responses=True
+        )
         self.queue_name = queue_name
 
     def publish(self, msg: dict):
@@ -23,12 +26,12 @@ class RedisQueue:
         return None
 
 
-if __name__ == '__main__':
-    q = RedisQueue('queue')
-    q.publish({'a': 1})
-    q.publish({'b': 2})
-    q.publish({'c': 3})
+if __name__ == "__main__":
+    q = RedisQueue("queue")
+    q.publish({"a": 1})
+    q.publish({"b": 2})
+    q.publish({"c": 3})
 
-    assert q.consume() == {'a': 1}
-    assert q.consume() == {'b': 2}
-    assert q.consume() == {'c': 3}
+    assert q.consume() == {"a": 1}
+    assert q.consume() == {"b": 2}
+    assert q.consume() == {"c": 3}

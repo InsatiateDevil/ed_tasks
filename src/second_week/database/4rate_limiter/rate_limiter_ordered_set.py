@@ -8,9 +8,10 @@ class RateLimitExceed(Exception):
 
 
 class RateLimiter:
-
     def __init__(self, limit=5, period=3):
-        self.redis = redis.StrictRedis(host='localhost', port=6379, decode_responses=True)
+        self.redis = redis.StrictRedis(
+            host="localhost", port=6379, decode_responses=True
+        )
         self.limit = limit
         self.period = period
 
@@ -50,7 +51,7 @@ def make_api_request(rate_limiter: RateLimiter):
         pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     rate_limiter = RateLimiter()
 
     for _ in range(15):

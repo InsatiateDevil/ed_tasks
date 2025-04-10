@@ -13,7 +13,7 @@ class RateLimiter:
     # но не затрагиваем его время жизни.
 
     def __init__(self, limit=5, period=3):
-        self.redis = redis.StrictRedis(host='localhost', port=6379, db=0)
+        self.redis = redis.StrictRedis(host="localhost", port=6379, db=0)
         self.limit = limit
         self.period = period
 
@@ -41,7 +41,7 @@ def make_api_request(rate_limiter: RateLimiter):
         pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     rate_limiter = RateLimiter()
 
     for _ in range(15):

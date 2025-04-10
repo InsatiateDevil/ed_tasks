@@ -14,19 +14,18 @@ def timeout_handler(signum, frame):
 
 class RedisConnector:
     def __init__(self, lock_key, timeout):
-        self.r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+        self.r = redis.Redis(host="localhost", port=6379, decode_responses=True)
         self.lock_key = lock_key
         self.timeout = timeout
         self.lock = self.r.lock(lock_key, timeout=timeout)
 
 
-def single(func: Callable = None,
-           max_processing_time: datetime.timedelta = None):
+def single(func: Callable = None, max_processing_time: datetime.timedelta = None):
     def decorator(func):
-
         def wrapper(*args, **kwargs):
-            conn = RedisConnector(func.__name__,
-                             int(max_processing_time.total_seconds()))
+            conn = RedisConnector(
+                func.__name__, int(max_processing_time.total_seconds())
+            )
             if conn.lock.locked():
                 raise RuntimeError("Процесс уже выполняется")
 
@@ -34,7 +33,8 @@ def single(func: Callable = None,
                 with ThreadPoolExecutor() as executor:
                     future = executor.submit(func, *args, **kwargs)
                     result = future.result(
-                        timeout=int(max_processing_time.total_seconds()))
+                        timeout=int(max_processing_time.total_seconds())
+                    )
                 return result
             finally:
                 if conn.lock.locked():
@@ -75,7 +75,7 @@ def process_transaction():
 #             self.raise_timeout_error()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # unittest.main()
 
     start_time = time.time()
