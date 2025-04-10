@@ -13,7 +13,7 @@ class TaskQueue(models.Model):
 
 def fetch_task():
     with transaction.atomic():
-        task = TaskQueue.objects.select_for_update().filter(status='pending').first()
+        task = TaskQueue.objects.select_for_update(skip_locked=True).filter(status='pending').first()
         if not task:
             return None
         task.status = 'in_progress'
@@ -23,7 +23,7 @@ def fetch_task():
 
 @transaction.atomic
 def fetch_task_alt():
-    task = TaskQueue.objects.select_for_update().filter(status='pending').first()
+    task = TaskQueue.objects.select_for_update(skip_locked=True).filter(status='pending').first()
     if not task:
         return None
     task.status = 'in_progress'
